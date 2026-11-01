@@ -1,0 +1,616 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Student World</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#0b1020;
+ color:white;
+}
+header{
+ background:linear-gradient(120deg,#5426a8,#087eaa);
+ padding:24px 16px;
+ text-align:center;
+}
+header h1{margin:0;font-size:28px}
+header p{color:#e4eaff}
+.container{max-width:900px;margin:auto;padding:18px}
+.card{
+ background:#171f38;
+ border:1px solid #303d60;
+ border-radius:15px;
+ padding:18px;
+ margin:14px 0;
+}
+input,select{
+ width:100%;padding:13px;margin:8px 0;
+ border:0;border-radius:8px;font-size:16px;
+}
+button{
+ background:#8b5cf6;color:white;border:0;
+ padding:12px 17px;border-radius:9px;
+ font-size:15px;font-weight:bold;
+ margin:5px;cursor:pointer;
+}
+button:hover{background:#6d3bd1}
+.lesson{
+ display:block;width:100%;text-align:left;
+ background:#222e4d;padding:16px;
+ margin:9px 0;border:1px solid #405078;
+}
+.lesson small{color:#c4cce3}
+.hidden{display:none}
+h2{color:#b9a0ff}
+h3{color:#68d9ff}
+pre{
+ background:#080d19;color:#9ef5c5;
+ padding:14px;border-radius:9px;
+ overflow-x:auto;white-space:pre-wrap;
+}
+.output{
+ background:#e9f4ff;color:#14233d;
+ padding:14px;border-radius:9px;
+}
+.progress{
+ background:#303b56;height:13px;
+ border-radius:20px;overflow:hidden;
+}
+#progressBar{
+ background:#38dca1;height:100%;width:0%;
+}
+.quiz-question{
+ background:#222e4d;padding:14px;
+ border-radius:10px;margin:12px 0;
+}
+.quiz-question button{display:block;width:100%;text-align:left}
+.result{color:#65e8b0;font-weight:bold}
+.back{background:#46536e}
+footer{text-align:center;color:#aab5d0;padding:25px}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🌍 My Student World</h1>
+<p>Learn Today. Teach Tomorrow.</p>
+</header>
+
+<div class="container">
+
+<section id="register" class="card">
+<h2>Welcome, Student!</h2>
+<p>Start your learning journey with us.</p>
+
+<label>Student Name</label>
+<input id="studentName" placeholder="Enter your name">
+
+<label>Select Course</label>
+<select id="course">
+<option value="BCA">BCA</option>
+<option value="BA">BA</option>
+</select>
+
+<label>Select Semester</label>
+<select id="semester">
+<option>Semester 1</option>
+</select>
+
+<button onclick="startLearning()">Start Learning 🚀</button>
+</section>
+
+<section id="dashboard" class="hidden">
+<div class="card">
+<h2 id="welcome"></h2>
+<p>🏆 Points: <b id="points">0</b></p>
+<p>📚 Completed Lessons: <b id="completed">0</b>/8</p>
+<div class="progress"><div id="progressBar"></div></div>
+</div>
+
+<div class="card">
+<h2 id="courseTitle">📘 BCA Semester 1</h2>
+<p>HTML Complete Beginner Course</p>
+<div id="lessonList"></div>
+</div>
+</section>
+
+<section id="lessonPage" class="hidden">
+<button class="back" onclick="goBack()">← Back to Lessons</button>
+<div class="card">
+<h2 id="lessonTitle"></h2>
+<div id="lessonContent"></div>
+</div>
+</section>
+
+</div>
+
+<footer>My Student World | Learn • Practice • Grow</footer>
+
+<script>
+let student = "";
+let points = 0;
+let completedLessons = [];
+let currentLesson = 0;
+let quizScore = 0;
+
+const lessons = [
+
+{
+title:"Lesson 1: Introduction to HTML",
+content:`
+<h3>1. What is HTML?</h3>
+<p>HTML stands for HyperText Markup Language.</p>
+<p>HTML is used to create web pages. It tells the browser how to show text, images, links and other content.</p>
+
+<h3>2. What is a Web Page?</h3>
+<p>A web page is a document that we open in a web browser. Example: a college website page.</p>
+
+<h3>3. What is a Browser?</h3>
+<p>A browser is software used to open websites. Examples: Google Chrome, Firefox and Microsoft Edge.</p>
+
+<h3>4. What is an HTML Tag?</h3>
+<p>An HTML tag is a keyword written inside angle brackets. Example: &lt;p&gt;.</p>
+
+<h3>Example Code</h3>
+<pre>&lt;h1&gt;Hello Students&lt;/h1&gt;
+&lt;p&gt;Welcome to My Website.&lt;/p&gt;</pre>
+
+<h3>Output</h3>
+<div class="output"><h2>Hello Students</h2><p>Welcome to My Website.</p></div>
+
+<h3>Remember</h3>
+<p>HTML = Structure of a Web Page.</p>
+
+<h3>Practice</h3>
+<p>1. Write the full form of HTML.</p>
+<p>2. Why do we use HTML?</p>
+`,
+quiz:[
+["What is the full form of HTML?",["HyperText Markup Language","HighText Machine Language","Home Tool Markup Language"],0],
+["HTML is used to create:",["Games only","Web pages","Operating systems"],1],
+["Which software opens a website?",["Browser","Calculator","Paint"],0]
+]
+},
+
+{
+title:"Lesson 2: Basic HTML Structure",
+content:`
+<h3>1. Basic Structure</h3>
+<p>Every HTML page has a basic structure. It contains important tags.</p>
+
+<h3>2. Important Tags</h3>
+<p><b>&lt;!DOCTYPE html&gt;</b> - Tells the browser that this is an HTML5 document.</p>
+<p><b>&lt;html&gt;</b> - The root element of the page.</p>
+<p><b>&lt;head&gt;</b> - Contains page information.</p>
+<p><b>&lt;title&gt;</b> - Sets the browser tab title.</p>
+<p><b>&lt;body&gt;</b> - Contains visible page content.</p>
+
+<h3>Example Code</h3>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;My First Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Welcome&lt;/h1&gt;
+  &lt;p&gt;This is my first page.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+<h3>Output</h3>
+<div class="output"><h2>Welcome</h2><p>This is my first page.</p></div>
+
+<h3>Remember</h3>
+<p>Body = Visible content. Title = Browser tab name.</p>
+
+<h3>Practice</h3>
+<p>1. Which tag contains visible content?</p>
+<p>2. Which tag sets the browser tab title?</p>
+`,
+quiz:[
+["Which tag contains visible content?",["head","body","title"],1],
+["Which tag sets the page title?",["title","p","h1"],0],
+["Which declaration tells the browser HTML5?",["DOCTYPE html","body","head"],0]
+]
+},
+
+{
+title:"Lesson 3: HTML Basic Tags",
+content:`
+<h2>HTML Basic Tags</h2>
+
+<p>HTML tags are used to create a web page.</p>
+
+<h3>1. Heading Tags</h3>
+<p>HTML has six heading tags from h1 to h6.</p>
+
+<pre>
+&lt;h1&gt;Heading 1&lt;/h1&gt;
+&lt;h2&gt;Heading 2&lt;/h2&gt;
+&lt;h3&gt;Heading 3&lt;/h3&gt;
+&lt;h4&gt;Heading 4&lt;/h4&gt;
+&lt;h5&gt;Heading 5&lt;/h5&gt;
+&lt;h6&gt;Heading 6&lt;/h6&gt;
+</pre>
+
+<h3>2. Paragraph Tag</h3>
+<p>The &lt;p&gt; tag is used to write a paragraph.</p>
+<pre>&lt;p&gt;I am a student.&lt;/p&gt;</pre>
+
+<h3>3. Break Tag</h3>
+<p>The &lt;br&gt; tag 
+
+moves text to a new line.</p>
+<pre>Hello&lt;br&gt;Students</pre>
+
+<h3>4. Horizontal Line Tag</h3>
+<p>The &lt;hr&gt; tag creates a horizontal line.</p>
+<pre>Hello&lt;hr&gt;Welcome</pre>
+
+<h3>5. Bold Tag</h3>
+<p>The &lt;b&gt; tag makes text bold.</p>
+<pre>&lt;b&gt;My College&lt;/b&gt;</pre>
+
+<h3>6. Italic Tag</h3>
+<p>The &lt;i&gt; tag makes text italic.</p>
+<pre>&lt;i&gt;Welcome&lt;/i&gt;</pre>
+
+<h3>7. Underline Tag</h3>
+<p>The &lt;u&gt; tag underlines text.</p>
+<pre>&lt;u&gt;Student&lt;/u&gt;</pre>
+
+<h3>Example Code</h3>
+<pre>
+&lt;h1&gt;My College&lt;/h1&gt;
+&lt;p&gt;I am a student.&lt;/p&gt;
+&lt;b&gt;Welcome&lt;/b&gt;
+&lt;br&gt;Hello Students
+&lt;hr&gt;
+</pre>
+
+<h3>Output</h3>
+<div class="output">
+<h1>My College</h1>
+<p>I am a student.</p>
+<b>Welcome</b><br>
+Hello Students
+<hr>
+</div>
+
+<h3>Practice</h3>
+<p>1. Which tag is used for a paragraph?</p>
+<p>2. Which tag creates a new line?</p>
+<p>3. Which tag makes text bold?</p>
+<p>4. How many heading tags are there?</p>
+`,
+quiz:[
+["Which tag creates a paragraph?",["p","h1","br"],0],
+["Which tag creates a new line?",["hr","br","p"],1],
+["Which tag makes text bold?",["i","b","u"],1],
+["How many heading levels are there?",["3","4","6"],2]
+]
+},
+  {
+title:"Lesson 4: Text Formatting",
+content:`
+<h3>1. Bold Tag</h3>
+<p>The &lt;b&gt; tag makes text bold.</p>
+
+<h3>2. Italic Tag</h3>
+<p>The &lt;i&gt; tag makes text italic.</p>
+
+<h3>3. Underline Tag</h3>
+<p>The &lt;u&gt; tag underlines text.</p>
+
+<h3>4. Strong and Emphasis</h3>
+<p>The &lt;strong&gt; tag shows important text. The &lt;em&gt; tag gives emphasis to text.</p>
+
+<h3>Example Code</h3>
+<pre>&lt;b&gt;Bold Text&lt;/b&gt;
+&lt;i&gt;Italic Text&lt;/i&gt;
+&lt;u&gt;Underline Text&lt;/u&gt;
+&lt;strong&gt;Important Text&lt;/strong&gt;
+&lt;em&gt;Emphasized Text&lt;/em&gt;</pre>
+
+<h3>Output</h3>
+<div class="output">
+<b>Bold Text</b><br><i>Italic Text</i><br>
+<u>Underline Text</u><br><strong>Important Text</strong><br>
+<em>Emphasized Text</em>
+</div>
+
+<h3>Practice</h3>
+<p>1. Which tag makes text bold?</p>
+<p>2. Which tag underlines text?</p>
+`,
+quiz:[
+["Which tag makes text bold?",["i","b","u"],1],
+["Which tag underlines text?",["u","p","br"],0],
+["Which tag gives emphasis?",["em","hr","title"],0]
+]
+},
+
+{
+title:"Lesson 5: Links and Images",
+content:`
+<h3>1. Link Tag</h3>
+<p>The &lt;a&gt; tag is used to create a hyperlink. The href attribute gives the link address.</p>
+
+<h3>2. Image Tag</h3>
+<p>The &lt;img&gt; tag is used to show an image.</p>
+
+<h3>3. Important Attributes</h3>
+<p><b>src</b> - Gives the image location.</p>
+<p><b>alt</b> - Gives alternative text if the image cannot load.</p>
+<p><b>href</b> - Gives the link address.</p>
+
+<h3>Example Code</h3>
+<pre>&lt;a href="https://example.com"&gt;
+Visit Website
+&lt;/a&gt;
+
+&lt;img src="photo.jpg"
+alt="My Photo" width="150"&gt;</pre>
+
+<h3>Remember</h3>
+<p>A link opens another page. An image displays a picture.</p>
+
+<h3>Practice</h3>
+<p>1. Which tag creates a link?</p>
+<p>2. What is the use of src?</p>
+`,
+quiz:[
+["Which tag creates a hyperlink?",["a","img","p"],0],
+["Which attribute gives the link address?",["src","href","alt"],1],
+["Which tag displays an image?",["image","img","picture"],1]
+]
+},
+
+{
+title:"Lesson 6: Lists and Tables",
+content:`
+<h3>1. Ordered List</h3>
+<p>The &lt;ol&gt; tag creates a numbered list. Each item uses the &lt;li&gt; tag.</p>
+
+<h3>2. Unordered List</h3>
+<p>The &lt;ul&gt; tag creates a bullet list.</p>
+
+<h3>3. HTML Table</h3>
+<p>The &lt;table&gt; tag creates a table.</p>
+<p>&lt;tr&gt; creates a row, &lt;th&gt; creates a heading cell and &lt;td&gt; creates a data cell.</p>
+
+<h3>Example Code</h3>
+<pre>&lt;ol&gt;
+  &lt;li&gt;HTML&lt;/li&gt;
+  &lt;li&gt;CSS&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;table border="1"&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Name&lt;/th&gt;
+    &lt;th&gt;Age&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Raj&lt;/td&gt;
+    &lt;td&gt;18&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</pre>
+
+<h3>Output</h3>
+<div class="output">
+<ol><li>HTML</li><li>CSS</li></ol>
+<table border="1" cellpadding="7">
+<tr><th>Name</th><th>Age</th></tr>
+<tr><td>Raj</td><td>18</td></tr>
+</table>
+</div>
+
+<h3>Practice</h3>
+<p>1. Which tag creates a numbered list?</p>
+<p>2. Which tag creates a table row?</p>
+`,
+quiz:[
+["Which tag creates a numbered list?",["ul","ol","li"],1],
+["Which tag creates a table row?",["tr","td","th"],0],
+["Which tag creates a bullet list?",["ol","ul","table"],1]
+]
+},
+
+{
+title:"Lesson 7: HTML Forms",
+content:`
+<h3>1. What is a Form?</h3>
+<p>An HTML form is used to collect information from users.</p>
+
+<h3>2. Important Form Tags</h3>
+<p><b>&lt;form&gt;</b> - Creates a form.</p>
+<p><b>&lt;input&gt;</b> - Takes user input.</p>
+<p><b>&lt;label&gt;</b> - Gives a name to an input field.</p>
+<p><b>&lt;button&gt;</b> - Creates a button.</p>
+<p><b>&lt;textarea&gt;</b> - Takes longer text.</p>
+
+<h3>Example Code</h3>
+<pre>&lt;form&gt;
+  &lt;label&gt;Name:&lt;/label&gt;
+  &lt;input type="text"&gt;
+
+  &lt;label&gt;Email:&lt;/label&gt;
+  &lt;input type="email"&gt;
+
+  &lt;button type="submit"&gt;
+    Submit
+  &lt;/button&gt;
+&lt;/form&gt;</pre>
+
+<h3>Output Example</h3>
+<div class="output">
+<label>Name:</label><input placeholder="Enter name">
+<label>Email:</label><input placeholder="Enter email">
+<button type="button">Submit</button>
+</div>
+
+<h3>Practice</h3>
+<p>1. Which tag creates a form?</p>
+<p>2. Which input type is used for email?</p>
+`,
+quiz:[
+["Which tag creates a form?",["form","table","img"],0],
+["Which input type is used for email?",["text","email","button"],1],
+["Which tag creates a button?",["input","button","label"],1]
+]
+},
+
+{
+title:"Lesson 8: Practical Projects",
+content:`
+<h3>Project 1: My First Web Page</h3>
+<p>Create a simple web page about yourself.</p>
+
+<h3>Example Code</h3>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;About Me&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;My Name is Raj&lt;/h1&gt;
+  &lt;p&gt;I am a BCA student.&lt;/p&gt;
+  &lt;h2&gt;My Hobbies&lt;/h2&gt;
+  &lt;ul&gt;
+    &lt;li&gt;Reading&lt;/li&gt;
+    &lt;li&gt;Learning HTML&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+<h3>Project 2: Student Registration Form</h3>
+<p>Create a form with name, email and course fields.</p>
+
+<h3>Your Task</h3>
+<p>1. Create your own About Me page.</p>
+<p>2. Add your name and hobbies.</p>
+<p>3. Create a student registration form.</p>
+
+<h3>Remember</h3>
+<p>Practice every day to become a better web developer!</p>
+`,
+quiz:[
+["Which tag is the main heading?",["h1","p","br"],0],
+["Which tag creates a bullet list?",["ol","ul","tr"],1],
+["Which tag collects user information?",["form","hr","title"],0]
+]
+}
+
+];
+function startLearning(){
+ student=document.getElementById("studentName").value.trim();
+ let selectedCourse=document.getElementById("course").value;
+
+ if(student===""){
+  alert("Please enter your name.");
+  return;
+ }
+
+ if(selectedCourse==="BA"){
+  alert("BA Course is coming soon!");
+  return;
+ }
+
+ document.getElementById("register").classList.add("hidden");
+ document.getElementById("dashboard").classList.remove("hidden");
+  let semester=document.getElementById("semester").value;
+document.getElementById("courseTitle").innerText="📘 "+selectedCourse+" "+semester;
+ showLessons();
+}
+
+
+function showLessons(){
+ let list=document.getElementById("lessonList");
+ list.innerHTML="";
+ lessons.forEach((lesson,index)=>{
+  let done=completedLessons.includes(index);
+  let button=document.createElement("button");
+  button.className="lesson";
+  button.innerHTML=(done?"✅ ":"📘 ")+lesson.title+
+  "<br><small>"+(done?"Completed":"Start Learning")+"</small>";
+  button.onclick=()=>openLesson(index);
+  list.appendChild(button);
+ });
+ updateProgress();
+}
+
+function openLesson(index){
+ currentLesson=index;
+ quizScore=0;
+ let lesson=lessons[index];
+
+ document.getElementById("dashboard").classList.add("hidden");
+ document.getElementById("lessonPage").classList.remove("hidden");
+ document.getElementById("lessonTitle").innerText=lesson.title;
+
+ let quizHTML="<h2>🧠 Smart Quiz</h2><p>Choose the correct answer.</p>";
+
+ lesson.quiz.forEach((question,qIndex)=>{
+  quizHTML+=`<div class="quiz-question">
+  <b>${qIndex+1}. ${question[0]}</b>
+  <div>`;
+  question[1].forEach((option,optionIndex)=>{
+   quizHTML+=`<button class="answer"
+   onclick="answerQuiz(this,${optionIndex===question[2]})">
+   ${option}</button>`;
+  });
+  quizHTML+=`</div><p class="result"></p></div>`;
+ });
+
+ document.getElementById("lessonContent").innerHTML=
+ lesson.content+quizHTML+
+ '<button onclick="completeLesson()">Complete Lesson +10 Points ⭐</button>';
+}
+
+function answerQuiz(button,correct){
+ let questionBox=button.parentElement.parentElement;
+ let buttons=questionBox.querySelectorAll("button");
+ buttons.forEach(btn=>btn.disabled=true);
+
+ let result=questionBox.querySelector(".result");
+ if(correct){
+  result.innerText="Correct! Great job 🎉";
+  quizScore++;
+ }else{
+  result.innerText="Not correct. Try again in your next practice.";
+ }
+}
+
+function completeLesson(){
+ if(!completedLessons.includes(currentLesson)){
+  completedLessons.push(currentLesson);
+  points+=10;
+ }
+ document.getElementById("points").innerText=points;
+ document.getElementById("completed").innerText=completedLessons.length;
+ goBack();
+}
+
+function updateProgress(){
+ let percent=(completedLessons.length/lessons.length)*100;
+ document.getElementById("progressBar").style.width=percent+"%";
+ document.getElementById("points").innerText=points;
+ document.getElementById("completed").innerText=completedLessons.length;
+}
+
+function goBack(){
+ document.getElementById("lessonPage").classList.add("hidden");
+ document.getElementById("dashboard").classList.remove("hidden");
+ showLessons();
+}
+</script>
+
+</body>
+</html>
